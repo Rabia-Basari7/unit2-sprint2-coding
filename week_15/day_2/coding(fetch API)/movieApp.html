@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: rgb(3, 3, 95);
+            font-family: 'Architects Daughter', cursive;
+        }
+        .container {
+            width: 95%;
+            display: grid;
+            grid-template-columns: repeat(3, 31%);
+            grid-gap: 2%;
+            margin-left: 5%;
+            margin-top: 50px;
+        }
+        .content, .errDiv {
+            width: 300px;
+            height: 450px;
+            background-color: rgb(9, 9, 116);
+            border: 1px solid gray;
+            border-radius: 10px;
+        }
+        .content:hover, .errDiv:hover {
+            box-shadow: 0px 0px 8px gray;
+            transform: scale(1.1);
+        }
+        .imageStyle {
+            width: 90%;
+            margin-left: 5%;
+            height: 200px;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .name {
+            font-size: 25px;
+            text-align: center;
+            color: rgb(199, 197, 197);
+        }
+        .recommend {
+            width: 120px;
+            height: 35px;
+            background-color: rgb(24, 182, 95);
+            color: rgb(199, 197, 197);
+            border-radius: 3px;
+            text-align: center;
+            margin-left: 90px;
+        }
+        .recommend > p {
+            color: rgb(199, 197, 197);
+            padding-top: 8px;
+        }
+        .msg {
+            font-size: 30px;
+            font-weight: bold;
+            color: rgb(199, 197, 197);
+            text-align: center;
+        }
+        .date, .genre, .rating {
+            color: rgb(199, 197, 197);
+            text-align: center;
+        }
+        #btn {
+            width: 120px;
+            height: 35px;
+            background-color: rgb(24, 182, 95);
+            color: rgb(224, 224, 224);
+            border-radius: 3px;
+            border: none;
+            font-size: 16px;
+        }
+        #movieName {
+            width: 200px;
+            height: 35px;
+            border-radius: 3px;
+            border: none;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <input type="text" id="movieName" />
+    <button id="btn" onclick="movies()">Search Movie</button>
+</body>
+</html>
+<script>
+
+    let container =document.createElement("div");
+    container.setAttribute("class", "container");
+
+    async function movies() {
+        let movie = document.getElementById("movieName").value;
+        try {
+            let res = await fetch(`http://www.omdbapi.com/?t=${movie}&apikey=36719d`);
+            let data = await res.json()
+            console.log("data:", data);
+
+            let content = document.createElement("div");
+            content.setAttribute("class", "content");
+
+            let image = document.createElement("img");
+            image.src = data.Poster;
+            image.setAttribute("class", "imageStyle");
+
+            let mName = document.createElement("p");
+            mName.setAttribute("class", "name");
+            mName.innerText = `${data.Title}`;
+
+            if(data.Title == undefined) {
+
+                image.src = `https://gifimage.net/wp-content/uploads/2017/11/incorrecto-gif-animado-1.gif`;
+                let errDiv = document.createElement("div");
+                errDiv.setAttribute("class", "errDiv");
+
+                let errMessage = document.createElement("p");
+                errMessage.setAttribute("class", "msg");
+                errMessage.innerText = "Sorry!!";
+
+                let errMessage2 = document.createElement("p");
+                errMessage2.setAttribute("class", "msg");
+                errMessage2.innerText = "Movie Not Found";
+
+                errDiv.append(image, errMessage, errMessage2);
+                container.append(errDiv);
+                document.body.append(container);
+            }
+            else {
+                let releaseDate = document.createElement("p");
+                releaseDate.setAttribute("class", "date");
+                releaseDate.innerText = `Released: ${data.Released}`;
+
+                let mGenre = document.createElement("p");
+                mGenre.setAttribute("class", "genre");
+                mGenre.innerText = `Genre: ${data.Genre}`;
+
+                let imdbRating = document.createElement("p");
+                imdbRating.setAttribute("class", "rating");
+                imdbRating.innerHTML = `Rating: ${data.imdbRating}`;
+
+                let recommended = document.createElement("div");
+                if (data.imdbRating >= 8.0) {
+                    recommended.setAttribute("class", "recommend");
+                    // recommended.innerText = "Recommended";
+                    let recText = document.createElement("p");
+                    recText.innerText = "Recommended";
+                    recommended.append(recText);
+
+                    // content.append(image, mName, releaseDate, mGenre, imdbRating);
+                }
+
+                content.append(image, recommended, mName, releaseDate, mGenre, imdbRating);
+                container.append(content);
+                document.body.append(container);
+            }   
+        }
+        catch (err) {
+            console.log("err:", err);
+        }
+    }
+</script>
+
+
+<!-- https://y.yarn.co/410e4d85-c946-4f55-a8e2-7a55dbf9e781_text.gif -->
