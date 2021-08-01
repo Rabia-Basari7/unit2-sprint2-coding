@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+       <input type="text" id="q" />
+    <button onclick="findVideos()">Search</button>
+    <div id="videos"></div>
+  </body>
+</html>
+<script>
+  //     https://youtube.googleapis.com/youtube/v3/search?key=[YOUR_API_KEY]' \
+  //   --header 'Authorization: Bearer [YOUR_ACCESS_TOKEN]' \
+  //   --header 'Accept: application/json' \
+  //   --compressed
+
+  //key:AIzaSyDU_-68i-uUxzTdIIPF9d4v6x5CahfgfiY
+  async function findVideos() {
+      var q=document.getElementById('q').value;
+    try {
+      let res = await fetch(
+        `https://youtube.googleapis.com/youtube/v3/search?q=${q}&key=AIzaSyBK_1UBD8FrJ57f44pcIa_fA6TmVfllrXg&maxResults=10`
+      );
+      let data = await res.json();
+      console.log("data", data);
+
+        let video_div=document.getElementById('videos');
+        // data.forEach(element => {
+            
+        // });
+        let videos_data=data.items;
+        let {items}=data;
+
+            items=items.filter((el)=>{
+                return el.id.videoId!=undefined;
+            })
+
+        items.forEach( ({id:{videoId}})=> {
+           console.log('videoid',videoId);
+               let div =document.createElement('div');
+               div.style.marginTop="20px";
+               div.innerHTML=`<iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+                video_div.appendChild(div);
+            });
+    } catch (err) {
+      console.log("error", err);
+    }
+  }
+  //makeRequest();
+</script>
