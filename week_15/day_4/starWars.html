@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background-image: url("https://starwarsblog.starwars.com/wp-content/uploads/2019/08/rise-of-skywalker-poster-tall.jpg");
+            background-size: cover;
+            /* background-repeat: no-repeat; */
+        }
+        #character {
+            width: 30%;
+            height: 35px;
+            border-top-right-radius: 15px;
+            border-top-left-radius: 15px;
+            border: none;
+            margin-left: 40%;
+            margin-top: 250px;
+            position: relative;
+            z-index: 1;
+        }
+        #character:focus {
+            outline: none;
+        }
+        .namesDiv2 {
+            width: 30%;
+            /* height: 200px; */
+            /* border: 1px solid rgb(15, 26, 128); */
+            border-top: none;
+            background-color: rgba(6, 56, 129, 0.9);
+            border-bottom-left-radius: 10px; 
+            border-bottom-right-radius: 10px;
+            /* overflow: scroll; */
+            margin-left: 35%;
+            /* display: none; */
+            /* margin-top: 0px; */
+            /* padding-top: 0px; */
+            
+        }
+        .miniDiv {
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+        }
+        .miniDiv > p {
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        #search {
+            border: none;
+        }
+        #search > img {
+            height: 20px;
+            width: 20px;
+            z-index: 5;
+            top: 70%;
+            left: -30%;
+            margin-left: -25px;
+        }
+    </style>
+</head>
+<body>
+    <input oninput="throtle()" type="text" id="character" placeholder="Enter character name.." />
+    <button id="search"><img src="outline_search_black_24dp.png"/></button>
+    <div id="namesDiv"></div>
+</body>
+</html>
+<script>
+
+    let namesDiv = document.getElementById("namesDiv");
+    var timerId;
+
+    // let character = document.getElementById("character");
+    // character.addEventListener("click", displayDiv);
+
+    // function displayDiv() {
+    //     namesDiv.style = "inherit";
+    // }
+
+    async function getCharacter() {
+        let character = document.getElementById("character").value;
+        
+        if(character.length <= 2) {
+            return false;
+        }
+        if(character.length == 0 ) {
+            removeDiv();
+        }
+        try{
+            let res = await fetch(`https://swapi.dev/api/people/?search=${character}`);
+            let data = await res.json();
+            console.log("data:", data.results);
+            return data.results;
+            // console.log(data.results);
+        }
+        catch(err) {
+            console.log("err:", err);
+        }
+    }
+
+    function removeDiv() {
+        namesDiv.style.visibility = "hidden"; 
+    }
+
+    function throtle() {
+        if(timerId) {
+            return false;
+        }
+
+        timerId = setTimeout(() => {
+            resolvePromise();
+            timerId = undefined;
+        }, 1000);
+
+    }
+
+    function searchName(result) {  
+        namesDiv.innerHTML = null;
+        namesDiv.setAttribute("class", "namesDiv2");
+        
+        result.forEach(({name, gender}) => {
+            let miniDiv = document.createElement("div");
+            miniDiv.setAttribute("class", "miniDiv");
+        
+            let p = document.createElement("p");
+            p.innerText = name;
+
+            let charGender = document.createElement("p");
+            charGender.innerText = gender;
+
+            miniDiv.append(p, charGender);
+            namesDiv.append(miniDiv);
+            // p.addEventListener("mouseover", redirect);
+        })
+    }
+
+    // function redirect(x) {
+        // window.location.href = "charPage.html";
+        // console.log("Im hovering!");
+    //     console.log(x);
+    // }
+
+    // getCharacter();
+    async function resolvePromise() {
+        let starChars = await getCharacter();
+        console.log(starChars);
+        searchName(starChars);
+    }
+    // resolvePromise();
+</script>
+
+<!-- ?search=${character} -->
