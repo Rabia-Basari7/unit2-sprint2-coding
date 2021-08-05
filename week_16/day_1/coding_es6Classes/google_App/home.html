@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Google</title>
+    <style>
+        img {
+            height: 100px;
+            width: 300px;
+        }
+        .inputDiv {
+            display: flex;
+            /* margin-left: 20px; */
+        }
+        .inputDiv > input {
+            width: 40%;
+            height: 40px;
+            margin-right: 20px;
+            margin-top: 30px;
+            border-radius: 25px;
+            border: 1px solid gray;
+        }
+        .inputDiv > input:hover {
+            outline: none;
+        }
+        button {
+            height: 42px;
+            width: 80px;
+            font-size: 15px;
+            font-weight: bold;
+            margin-top: 30px;
+            border: 1px solid rgb(201, 201, 201);
+            border-radius: 5px;
+        }
+        .heads {
+            color: blue;
+            margin-left: 10px;
+        }
+        .heads:hover {
+            cursor: pointer;
+        }
+        .mainDiv {
+            width: 60%;
+            margin-top: 20px;
+            margin-left: 70px;
+            border-radius: 10px;
+            border: 1px solid rgb(219, 215, 215);
+        }
+        .font {
+            font-size: 17px;
+            line-height: 0.6cm;
+            margin-left: 10px;
+        }
+        .fontT {
+            font-size: 25px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="inputDiv">
+        <img src="https://storage.googleapis.com/gd-wagtail-prod-assets/original_images/evolving_google_identity_2x1.jpg" />
+        <input id="search" type="text" placeholder="Search your topic" />
+        <button id="button" onclick="searchData()">Search</button>
+    </div>
+</body>
+</html>
+<script>
+    async function searchData() {
+        let input = document.getElementById("search").value;
+        console.log("input:", input);
+        try {
+            let res = await fetch(`http://api.serpstack.com/search?access_key=e81ff60a0a0aa016b05d20a0b82ec10d&query=${input}`);
+            let data = await res.json();
+            console.log("data:", data);
+            appendData(data);
+        }
+        catch(err) {
+            console.log("err:", err);
+        }
+    }
+
+    function appendData({ knowledge_graph: {title, description, type }, organic_results}) {
+        console.log( title, description  );
+        // console.log(i);
+        let mainDiv = document.createElement("div");
+        mainDiv.setAttribute("class", "mainDiv");
+        let div = document.createElement("div");
+        let titleMain = document.createElement("h1");
+        titleMain.setAttribute("class", "heads");
+        let desc = document.createElement("p");
+        desc.setAttribute("class", "font");
+        let typeP = document.createElement("p");
+        typeP.setAttribute("class", "fontT");
+
+        titleMain.innerText = title;
+        desc.innerText = description;
+        typeP.innerText = type;
+
+        titleMain.addEventListener("click", function() {
+            window.location.href = `${organic_results[0].url}`
+        });
+
+        div.append(titleMain, desc, typeP);
+        mainDiv.append(div)
+        document.body.append(mainDiv);
+
+        organic_results.forEach((el) => {
+            let redirects = document.createElement("h2");
+            redirects.setAttribute("class", "heads");
+            redirects.innerText = el.title;
+            redirects.addEventListener("click", function() {
+                window.location.href = `${el.url}`
+            })
+            div.append(redirects);
+        })
+        // let newData = data.knowledge_graph;
+        // newData.forEach(())
+    }
+</script>
+
+
+<!-- e81ff60a0a0aa016b05d20a0b82ec10d -->
