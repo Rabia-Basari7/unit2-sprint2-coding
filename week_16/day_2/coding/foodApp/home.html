@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" type="image/jpg" href="burger2.jpg" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Truffle</title>
+    <link rel="stylesheet" href="./styles/styles.css">
+</head>
+<body>
+    <!-- <div id="navbar">
+        <h3><a href="/">Home</a></h3>
+
+        <div class="options">
+            <h3><a href="/latest.html">Latest Recipe</a></h3>
+            <h3><a href="/recipeOfDay.html">Recipe of the Day</a></h3>
+            <h3><a href="#">Register</a></h3>
+            <h3><a href="#">Login</a></h3>
+        </div>
+    </div> -->
+    
+</body>
+</html>
+<script type="module">
+    import navbar from "./components2/navbar.js";
+    import {getFood, appendRecipes} from "./scripts/showFood.js";
+    // console.log("searchItem:", searchItem);
+    document.body.innerHTML = navbar();
+
+    let btn = document.getElementById("search");
+    btn.addEventListener("click", searchItem);
+
+    async function searchItem() {
+        let input = document.getElementById("searchFood").value;
+        // console.log("input:", input);
+        let parent = document.getElementById("data");
+        parent.innerHTML = null;
+
+        try {
+            let res = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${input}`)
+            let data = await res.json();
+            console.log("data:", data);
+            // let parent = document.getElementById("data");
+            appendRecipes(data, parent);
+        }
+        catch (err) {
+            console.log("err:", err);
+        }
+    }
+
+    async function checkData() {
+        try {
+            let response = await getFood("https://www.themealdb.com/api/json/v1/1/filter.php?a=Canadian");
+
+            let parent = document.getElementById("data");
+            appendRecipes(response, parent);
+            console.log("response:", response);
+        }
+        catch (err) {
+            console.log("err:", err);
+        }
+    }
+    checkData();
+
+    
+</script>
